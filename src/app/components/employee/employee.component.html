@@ -1,0 +1,799 @@
+
+<p-toast></p-toast>
+<div class="p-4 relative">
+  <p-progress-spinner
+    *ngIf="loading"
+    class="absolute inset-0 flex items-center justify-center bg-white/70 z-10"
+    ariaLabel="loading"
+  ></p-progress-spinner>
+
+  <div class="hidden md:flex justify-between mb-6">
+    <h1 class="text-xl font-bold">Employee ({{ employees.length }})</h1>
+    <div class="flex gap-2 items-center">
+      <!-- Search Input  -->
+      <p-iconfield>
+        <input
+          type="text"
+          pInputText
+          placeholder="Search"
+          (input)="filterData()"
+          [(ngModel)]="search"
+          class="rounded-full border-none ml-2"
+        />
+        <p-inputicon styleClass="pi pi-search" />
+      </p-iconfield>
+
+      <!-- Active Button -->
+      <p-button
+        label="Active"
+        icon="pi pi-users"
+        severity="success"
+        [badge]="getActiveEmployeeCount().toString()"
+        badgeSeverity="success"
+        styleClass="m-0"
+        [outlined]="true"
+        (click)="filterEmployeesByStatus(false)"
+      />
+
+      <!-- Inactive Button -->
+      <p-button
+        label="Inactive"
+        icon="pi pi-users"
+        severity="warn"
+        [badge]="getInactiveEmployeeCount().toString()"
+        badgeSeverity="warn"
+        styleClass="m-0"
+        [outlined]="true"
+        (click)="filterEmployeesByStatus(true)"
+      />
+
+      <!-- Filter  -->
+      <p-button
+        icon="pi pi-sliders-v"
+        [rounded]="true"
+        [outlined]="true"
+        (click)="openFilterMenu($event, menuFilterEmployee)"
+        [ngClass]="{ 'active-filter': currentStatus !== null }"
+      />
+    </div>
+  </div>
+
+  <div class="flex md:hidden justify-between mb-6">
+    <h1 class="text-xl font-bold">Employee ({{ employees.length }})</h1>
+    <div class="flex gap-2">
+      <div
+        class="overflow-hidden transition-all duration-1000 ease-in-out"
+        [class.w-0]="!showMobileSearch"
+        [class.w-48]="showMobileSearch"
+        [class.opacity-0]="!showMobileSearch"
+        [class.opacity-100]="showMobileSearch"
+        *ngIf="showMobileSearch"
+      >
+        <p-iconfield class="w-full">
+          <input
+            type="text"
+            (input)="filterData()"
+            pInputText
+            placeholder="Search"
+            [(ngModel)]="search"
+            class="w-full rounded-full border-none"
+            #searchInput
+            (focusout)="focusOutFunction()"
+          />
+
+          <p-inputicon styleClass="pi pi-search" />
+        </p-iconfield>
+      </div>
+      <div
+        class="transition-all duration-300 ease-in-out"
+        [class.opacity-0]="showMobileSearch"
+        [class.opacity-100]="!showMobileSearch"
+        [class.w-0]="showMobileSearch"
+        [class.w-auto]="!showMobileSearch"
+      >
+        <p-button
+          icon="pi pi-search"
+          [rounded]="true"
+          [outlined]="true"
+          *ngIf="!showMobileSearch"
+          (click)="toggleMobileSearch()"
+        />
+      </div>
+      <!-- <p-button icon="pi pi-sliders-v" [rounded]="true" [outlined]="true" /> -->
+      <p-button
+        icon="pi pi-sliders-v"
+        [rounded]="true"
+        [outlined]="true"
+        (click)="openFilterMenu($event, menuFilterEmployee)"
+        [ngClass]="{ 'active-filter': currentStatus !== null }"
+      />
+    </div>
+  </div>
+
+  <div class="hidden md:block lg:block">
+    <div class="space-y-2 text-xs">
+      <table class="w-full border-collapse border-spacing-y-2">
+        <thead class="hidden md:table-header-group lg:table-header-group">
+          <tr>
+            <th class="font-semibold px-4 py-4 bg-gray-50 text-left">UID</th>
+            <th class="font-semibold px-4 py-4 bg-gray-50 text-left">
+              Client Name
+            </th>
+            <th
+              class="font-semibold px-4 py-4 bg-gray-50 md:hidden lg:table-cell text-left"
+            >
+              Email
+            </th>
+            <th class="font-semibold px-4 py-4 bg-gray-50 text-left">
+              Approval Status
+            </th>
+            <th class="font-semibold px-4 py-4 bg-gray-50 text-left">
+              Activation Status
+            </th>
+            <th
+              class="font-semibold px-4 py-4 bg-gray-50 md:hidden lg:table-cell text-left"
+            >
+              Total companies
+            </th>
+
+            <th
+              class="font-semibold px-4 py-4 bg-gray-50 rounded-r-xl text-left"
+            >
+              Actions
+            </th>
+          </tr>
+        </thead>
+
+        <tbody class="divide-y-2 divide-transparent">
+          <tr
+            *ngFor="let employee of paginatedEmployees"
+            class="md:table-row lg:table-row h-[55px]"
+          >
+            <td class="p-0 md:table-cell lg:table-cell align-middle">
+              <div class="bg-white px-4 py-4 h-[50px] flex items-center">
+                {{ employee.unique_identifier }}
+              </div>
+            </td>
+
+            <td class="p-0 md:table-cell lg:table-cell align-middle">
+              <div class="bg-white px-4 py-4 h-[50px] flex items-center">
+                {{ employee.username }}
+              </div>
+            </td>
+
+            <td class="p-0 md:hidden lg:table-cell align-middle">
+              <div class="bg-white px-4 py-4 h-[50px] flex items-center">
+                {{ employee.email }}
+              </div>
+            </td>
+
+            <td class="p-0 md:table-cell lg:table-cell align-middle">
+              <div class="bg-white px-4 py-4 h-[50px] flex items-center">
+                <p-tag
+                  value="Approved"
+                  *ngIf="employee.is_approved"
+                  [rounded]="true"
+                  styleClass="text-xs font-normal p-2"
+                />
+                <p-tag
+                  severity="warn"
+                  value="Pending"
+                  *ngIf="employee.is_pending"
+                  [rounded]="true"
+                  styleClass="text-xs font-normal p-2"
+                />
+                <p-tag
+                  severity="danger"
+                  value="Diapproved"
+                  *ngIf="employee.is_rejected"
+                  [rounded]="true"
+                  styleClass="text-xs font-normal p-2"
+                />
+              </div>
+            </td>
+            <td class="p-0 md:table-cell lg:table-cell align-middle">
+              <div class="bg-white px-4 py-4 h-[50px] flex items-center">
+                <p-tag
+                  severity="success"
+                  value="Activate"
+                  *ngIf="!employee.is_blocked"
+                  [rounded]="true"
+                  styleClass="text-xs font-normal p-2"
+                />
+                <p-tag
+                  severity="danger"
+                  value="Desactivate"
+                  *ngIf="employee.is_blocked"
+                  [rounded]="true"
+                  styleClass="text-xs font-normal p-2"
+                />
+              </div>
+            </td>
+
+            <td class="p-0 md:hidden lg:table-cell align-middle">
+              <div class="bg-white px-4 py-4 h-[50px] flex items-center">
+                {{ employee.companies?.length }}
+              </div>
+            </td>
+
+            <td class="p-0 md:table-cell lg:table-cell align-middle">
+              <div
+                class="bg-white px-4 py-4 h-[50px] flex items-center gap-2 rounded-r-xl"
+              >
+                <p-button
+                  *ngIf="employee.is_pending"
+                  label="Accept"
+                  size="small"
+                  [rounded]="true"
+                  styleClass="bg-primary bg-opacity-10 border-none text-primary px-5 py-2"
+                  (onClick)="showApproveDialog(employee)"
+                />
+                <p-button
+                  *ngIf="employee.is_pending"
+                  variant="outlined"
+                  label="Reject"
+                  size="small"
+                  [rounded]="true"
+                  styleClass="px-5 py-2"
+                  (onClick)="showRejectDialog(employee)"
+                />
+                <p-button
+                  *ngIf="!employee.is_pending"
+                  size="small"
+                  [rounded]="true"
+                  label="Consult Profile"
+                  styleClass="px-5 py-2"
+                  variant="outlined"
+                  (click)="onView(employee)"
+                />
+
+                <div class="hidden lg:block">
+                  <p-button
+                    icon="pi pi-ellipsis-h"
+                    size="small"
+                    [text]="true"
+                    (click)="openMenu($event, employee, menuEmployee)"
+                  />
+                </div>
+                <div class="lg:hidden">
+                  <p-button
+                    icon="pi pi-ellipsis-v"
+                    size="small"
+                    [text]="true"
+                    (click)="openMenu($event, employee, menuEmployee)"
+                  />
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- No Employee Message -->
+      <div *ngIf="paginatedEmployees.length === 0" class="no-employee-message">
+        <p>No Employees </p>
+      </div>
+
+      <p-paginator
+      *ngIf="paginatedEmployees.length !== 0"
+        [rows]="rowsPerPage"
+        [totalRecords]="employees.length"
+        [rowsPerPageOptions]="[2, 5, 10, 20]"
+        (onPageChange)="onPageChange($event)"
+        styleClass="border-0 mb-4"
+        [classList]="'justify-end'"
+      >
+      </p-paginator>
+    </div>
+  </div>
+
+  <!-- Mobile View -->
+  <div class="block grid grid-cols-1 md:hidden">
+    <div
+      *ngFor="let employee of paginatedEmployees"
+      class="bg-white rounded-3xl p-4 mb-4 shadow-sm"
+    >
+      <div class="flex justify-between items-center mb-2">
+        <div class="flex items-center gap-3 mb-2">
+          <p-avatar
+            image="assets/images/profile_avatar.png"
+            styleClass="mr-2"
+            size="large"
+            shape="circle"
+          ></p-avatar>
+          <div>
+            <p class="font-bold">{{ employee.username }}</p>
+            <p class="text-gray-600">{{ employee.email }}</p>
+          </div>
+        </div>
+        <p-button
+          icon="pi pi-ellipsis-v"
+          size="small"
+          [text]="true"
+          (click)="openMenu($event, employee, menuEmployee)"
+        />
+      </div>
+      <div class="flex justify-between items-center mb-1">
+        <p class="font-bold">{{ employee.unique_identifier }}</p>
+        <p-tag
+          value="Approved"
+          *ngIf="employee.is_approved"
+          [rounded]="true"
+          styleClass="text-xs font-normal p-2"
+        />
+        <!-- <p-tag severity="danger" value="Blocked" *ngIf="employee.is_blocked" [rounded]="true" styleClass="text-xs font-normal p-2" /> -->
+        <p-tag
+          severity="warn"
+          value="Pending"
+          *ngIf="employee.is_pending"
+          [rounded]="true"
+          styleClass="text-xs font-normal p-2"
+        />
+        <p-tag
+          severity="danger"
+          value="Rejected"
+          *ngIf="employee.is_rejected"
+          [rounded]="true"
+          styleClass="text-xs font-normal p-2"
+        />
+      </div>
+      <p-divider />
+
+      <div class="flex gap-2 justify-center w-full">
+        <p-button
+          *ngIf="employee.is_pending"
+          label="Accept"
+          size="small"
+          [rounded]="true"
+          styleClass="bg-primary bg-opacity-10 border-none text-primary px-5 py-2"
+          (onClick)="showApproveDialog(employee)"
+        />
+        <p-button
+          *ngIf="employee.is_pending"
+          variant="outlined"
+          label="Reject"
+          size="small"
+          [rounded]="true"
+          styleClass="px-5 py-2"
+          (onClick)="showRejectDialog(employee)"
+        />
+
+        <p-button
+          *ngIf="!employee.is_pending"
+          size="small"
+          [rounded]="true"
+          label="Consult Profile"
+          severity="secondary"
+          styleClass="w-full"
+          class="flex-grow"
+          (click)="onView(employee)"
+        />
+      </div>
+    </div>
+
+    <div *ngIf="paginatedEmployees.length === 0" class="no-employee-message">
+      <p>No Employees </p>
+    </div>
+  
+    <p-paginator
+    *ngIf="paginatedEmployees.length !== 0"
+      [rows]="rowsPerPage"
+      [totalRecords]="employees.length"
+      [rowsPerPageOptions]="[2, 5, 10, 20]"
+      (onPageChange)="onPageChange($event)"
+      styleClass="border-0 mt-4"
+      [classList]="'justify-center'"
+    >
+    </p-paginator>
+  </div>
+</div>
+<!-- 
+ -->
+<p-menu
+  #menuEmployee
+  [model]="menuItems"
+  [popup]="true"
+  [appendTo]="'body'"
+  styleClass="surface-100 shadow-lg border-none w-32 p-4 rounded-2xl"
+>
+  <ng-template pTemplate="item" let-item>
+    <div
+      class="flex items-center gap-3 px-3 py-2 mb-2 rounded-full transition-colors cursor-pointer"
+      [ngClass]="{
+        'text-teal-600 bg-teal-50 hover:bg-teal-100': item.label === 'View',
+        'text-orange-500 bg-orange-50 hover:bg-orange-100':
+          item.label === 'Edit',
+        'text-red-500 bg-red-50 hover:bg-red-100': item.label === 'Delete'
+      }"
+    >
+      <i [class]="item.icon"></i>
+      <span>{{ item.label }}</span>
+    </div>
+  </ng-template>
+</p-menu>
+
+<p-menu
+  #menuFilterEmployee
+  [model]="menuFilterItems"
+  [popup]="true"
+  [appendTo]="'body'"
+  styleClass="surface-100 shadow-lg border-none w-32 p-4 rounded-2xl"
+>
+  <ng-template pTemplate="item" let-item>
+    <div
+      *ngIf="!item.separator"
+      class="flex items-center gap-3 px-3 py-2 mb-2 rounded-full transition-colors cursor-pointer"
+      [ngClass]="{
+        'text-orange-500 bg-orange-50 hover:bg-orange-100':
+          item.label === 'Pending',
+        'text-teal-600 bg-teal-50 hover:bg-teal-100': item.label === 'Approved',
+        'text-red-500 bg-red-50 hover:bg-red-100': item.label === 'Rejected',
+        'text-green-600 bg-green-50 hover:bg-green-100':
+          item.label === 'Clear Filter',
+        'border-2': currentStatus === 'is_' + item.label?.toLowerCase(),
+        'border-current': currentStatus === 'is_' + item.label?.toLowerCase()
+      }"
+    >
+      <i [class]="item.icon"></i>
+      <span>{{ item.label }}</span>
+      <i
+        *ngIf="currentStatus === 'is_' + item.label?.toLowerCase()"
+        class="pi pi-check ml-auto"
+      ></i>
+    </div>
+  </ng-template>
+</p-menu>
+
+<!--  -->
+<p-dialog
+  [(visible)]="showEditDialog"
+  [modal]="true"
+  [contentStyle]="{ padding: '2rem' }"
+  styleClass="rounded-2xl"
+  [closable]="false"
+  maskStyleClass="backdrop-blur-md"
+  [style]="{ width: '585px' }"
+  [breakpoints]="{
+    '1200px': '585px',
+    '992px': '585px',
+    '768px': '585px',
+    '599px': '100vw'
+  }"
+>
+  <ng-template pTemplate="header">
+    <h2 *ngIf="!isMobile" class="text-xl w-full font-bold">Edit Profile</h2>
+
+    <div
+      class="flex items-center w-full"
+      [ngClass]="{ 'justify-end': !isMobile, 'justify-start': isMobile }"
+    >
+      <button
+        *ngIf="!isMobile"
+        pButton
+        icon="pi pi-times"
+        class="p-button-text"
+        size="large"
+        (click)="hideEditDialog()"
+      ></button>
+
+      <p-button
+        *ngIf="isMobile"
+        label="Back"
+        icon="pi pi-arrow-left"
+        variant="outlined"
+        severity="contrast"
+        (onClick)="showEditDialog = false"
+      />
+    </div>
+  </ng-template>
+
+  <p-divider class="-mt-8" />
+  <h2 *ngIf="isMobile" class="text-xl font-bold">Edit Profile</h2>
+
+  <div class="flex flex-col gap-6">
+    <div class="flex flex-col gap-2">
+      <input
+        type="text"
+        pInputText
+        [(ngModel)]="selectedEmployee!.username"
+        class="w-full px-3 py-2 !border-0 !border-b-2 border-gray-300 focus:outline-none rounded-none focus:!border-b-2 focus:!border-teal-600 shadow-none"
+        placeholder="Full Name"
+        required="true"
+      />
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <input
+        type="email"
+        pInputText
+        [value]="selectedEmployee!.email"
+        class="w-full px-3 py-2 !border-0 !border-b-2 border-gray-300 focus:outline-none rounded-none focus:!border-b-2 focus:!border-teal-600 shadow-none"
+        disabled="true"
+      />
+    </div>
+    <div class="flex flex-col gap-2">
+      <input
+        type="password"
+        pInputText
+        [(ngModel)]="newPassword"
+        class="w-full px-3 py-2 !border-0 !border-b-2 border-gray-300 focus:outline-none rounded-none focus:!border-b-2 focus:!border-teal-600 shadow-none"
+        placeholder="New Password"
+      />
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <input
+        type="password"
+        pInputText
+        [(ngModel)]="confirmPassword"
+        class="w-full px-3 py-2 !border-0 !border-b-2 border-gray-300 focus:outline-none rounded-none focus:!border-b-2 focus:!border-teal-600 shadow-none"
+        placeholder="Re-enter New Password"
+      />
+    </div>
+
+    <!-- Error Message Display -->
+    <small class="text-red-500" *ngIf="errorMessage">{{ errorMessage }}</small>
+  </div>
+
+  <div class="flex flex-col gap-4 mt-6">
+    <p-button
+      [rounded]="true"
+      label="Save"
+      styleClass="w-full"
+      [loading]="loading"
+      (onClick)="updateEmployee()"
+    >
+    </p-button>
+    <p-button
+      label="Cancel"
+      [rounded]="true"
+      (click)="hideEditDialog()"
+      [outlined]="true"
+      styleClass="w-full"
+    >
+    </p-button>
+    <!--  -->
+  </div>
+</p-dialog>
+
+<p-dialog
+  [(visible)]="viewDialogVisible"
+  [modal]="true"
+  [closable]="false"
+  [contentStyle]="{ padding: isMobile ? '1rem' : '2rem' }"
+  [ngClass]="{ 'rounded-2xl': !isMobile, 'rounded-none': !isMobile }"
+  maskStyleClass="backdrop-blur-md"
+  [style]="{ width: '65vw' }"
+  [breakpoints]="{
+    '1200px': '80vw',
+    '992px': '90vw',
+    '768px': '95vw',
+    '599px': '100vw'
+  }"
+>
+  <ng-template pTemplate="header">
+    <div
+      class="flex items-center w-full"
+      [ngClass]="{ 'justify-end': !isMobile, 'justify-start': isMobile }"
+    >
+      <button
+        *ngIf="!isMobile"
+        pButton
+        icon="pi pi-times"
+        class="p-button-text"
+        size="large"
+        (click)="viewDialogVisible = false"
+      ></button>
+      <p-button
+        *ngIf="isMobile"
+        label="Back"
+        icon="pi pi-arrow-left"
+        variant="outlined"
+        severity="contrast"
+        (onClick)="viewDialogVisible = false"
+      />
+    </div>
+  </ng-template>
+  <p-divider *ngIf="isMobile" />
+
+  <div
+    class="flex justify-between items-center w-full mb-8"
+    [ngClass]="{ '-mt-8 ': !isMobile, '-mt-2': isMobile }"
+  >
+    <div class="flex items-center gap-3">
+      <img
+        [src]="selectedEmployee.avatar || 'assets/images/profile_avatar.png'"
+        class="w-12 h-12 rounded-full"
+      />
+      <div>
+        <h2 class="text-lg font-semibold">{{ selectedEmployee.username }}</h2>
+        <p class="text-gray-500">{{ selectedEmployee.email }}</p>
+      </div>
+    </div>
+    <div class="flex justify-between items-center gap-3">
+      <p-button
+        *ngIf="!isMobile"
+        icon="pi pi-pencil"
+        [rounded]="true"
+        (click)="onEdit(selectedEmployee)"
+        [outlined]="true"
+        size="large"
+      />
+
+      <!-- <button pButton *ngIf="!isMobile" label="Disactivate account" size="small" [rounded]="true" (click)="onDeactivate()"></button> -->
+      <p-button
+        *ngIf="!isMobile"
+        [label]="
+          selectedEmployee.is_blocked
+            ? 'Activate account'
+            : 'Desactivate account'
+        "
+        size="small"
+        [rounded]="true"
+        (click)="toggleBlockStatus(selectedEmployee)"
+      >
+      </p-button>
+
+      <!-- <p-button *ngIf="isMobile" icon="pi pi-ellipsis-h" [rounded]="true" (click)="menuOnViewMobile.toggle($event)" /> -->
+      <p-button
+        *ngIf="isMobile"
+        icon="pi pi-ellipsis-h"
+        [rounded]="true"
+        (click)="openMobileMenu($event, selectedEmployee)"
+      />
+    </div>
+  </div>
+
+  <!-- Mobile view for companies list -->
+  <div [ngClass]="{ hidden: !isMobile, block: isMobile }">
+    <p-divider />
+    <div
+      *ngIf="
+        !selectedEmployee?.companies || selectedEmployee?.companies.length === 0
+      "
+      class="flex flex-col items-center justify-center py-10"
+    >
+      <i class="pi pi-briefcase text-gray-300 text-4xl mb-3"></i>
+      <p class="text-gray-500">No companies available for this employee.</p>
+    </div>
+    <div *ngFor="let company of selectedEmployee?.companies" class="px-2">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <img src="assets/images/company-icon.png" class="w-6 h-6" />
+          <div>
+            <p class="font-semibold">{{ company.name }}</p>
+            <p class="text-gray-500 text-xs">{{ company.uid }}</p>
+            <span class="text-xs text-gray-500 mb-3">
+              Created: {{ company.legal_information?.registration_date }}
+            </span>
+          </div>
+        </div>
+        <div class="grid grid-column gap-2">
+          <span
+            class="px-2 py-1 rounded-full text-xs"
+            [ngClass]="{
+              'bg-green-100 text-green-600':
+                company.approval_status == 'active',
+              'bg-orange-100 text-orange-600':
+                company.approval_status == 'pending',
+              'bg-red-100 text-red-600': company.approval_status == 'inactive'
+            }"
+          >
+            {{ company.approval_status.toLowerCase() }}
+          </span>
+          <div class="flex justify-end gap-2">
+            <p-button icon="pi pi-eye" [text]="true" [rounded]="true" />
+            <p-button
+              icon="pi pi-pencil"
+              [text]="true"
+              [rounded]="true"
+              (click)="onEditCompany(company)"
+            />
+            <p-button
+              icon="pi pi-trash"
+              [text]="true"
+              [rounded]="true"
+              (click)="onDeleteCompany(company)"
+            />
+          </div>
+        </div>
+      </div>
+      <p-divider />
+    </div>
+  </div>
+
+  <table class="text-xs" [ngClass]="{ hidden: isMobile, 'w-full': !isMobile }">
+    <thead>
+      <tr class="text-left bg-gray-100">
+        <th class="p-3 rounded-l-2xl w-1/4 text-center">Company</th>
+        <th class="p-3 w-1/4 text-center">Creation Date</th>
+        <th class="p-3 w-1/4 text-center">Status</th>
+        <th class="p-3 text-center rounded-r-2xl w-1/4">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr
+        *ngIf="
+          !selectedEmployee?.companies ||
+          selectedEmployee?.companies.length === 0
+        "
+        class="h-40"
+      >
+        <td colspan="4" class="text-center">
+          <div class="flex flex-col items-center justify-center p-8">
+            <i class="pi pi-briefcase text-gray-300 text-5xl mb-4"></i>
+            <p class="text-gray-500 text-base">
+              No companies available for this employee.
+            </p>
+          </div>
+        </td>
+      </tr>
+      <tr
+        *ngFor="let company of selectedEmployee?.companies"
+        class="space-y-4 border-b border-gray-300"
+      >
+        <td class="text-center">
+          <div class="flex justify-center items-center gap-2">
+            <img src="assets/images/company-icon.png" class="w-6 h-6" />
+            <div>
+              <p class="font-semibold">{{ company.name }}</p>
+              <p class="text-gray-500 text-sm">{{ company.uid }}</p>
+            </div>
+          </div>
+        </td>
+        <td class="text-center">
+          {{ company.legal_information?.registration_date }}
+        </td>
+        <td class="text-center">
+          <p-tag
+            [value]="company.approval_status.toUpperCase()"
+            [rounded]="true"
+            [ngClass]="{
+              'bg-green-100 text-green-600':
+                company.approval_status == 'active',
+              'bg-orange-100 text-orange-600':
+                company.approval_status == 'pending',
+              'bg-red-100 text-red-600': company.approval_status == 'inactive'
+            }"
+            styleClass="text-xs font-normal p-2"
+          />
+        </td>
+        <td class="flex justify-center">
+          <p-button icon="pi pi-eye" [text]="true" [rounded]="true" />
+          <p-button
+            icon="pi pi-pencil"
+            [text]="true"
+            [rounded]="true"
+            (click)="onEditCompany(company)"
+          />
+          <p-button
+            icon="pi pi-trash"
+            [text]="true"
+            [rounded]="true"
+            (click)="onDeleteCompany(company)"
+          />
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</p-dialog>
+<p-menu
+  #menuOnViewMobile
+  [model]="items"
+  [popup]="true"
+  [appendTo]="'body'"
+  styleClass="surface-500 border-none p-2 rounded-2xl"
+>
+</p-menu>
+
+<app-confirmation-dialog
+  [(visible)]="showDialog"
+  [object]="selectedEmployee"
+  [dialogTitle]="dialogTitle"
+  [message]="dialogMessage"
+  [confirmButtonText]="dialogConfirmLabel"
+  [confirmButtonClass]="confirmButtonClass"
+  [fieldsConfig]="dialogDisplayData"
+  (confirmed)="handleConfirm()"
+  (cancel)="handleCancel()"
+/>

@@ -1,0 +1,208 @@
+<!-- Backdrop -->
+
+<p-toast></p-toast>
+@if (isOpen) {
+<div
+  class="fixed inset-0 bg-black/30 backdrop-blur-sm lg:hidden z-20"
+  (click)="closeSidebar()"
+  @fadeAnimation
+></div>
+}
+<aside
+  [class.hidden]="!isOpen"
+  [@slideAnimation]="isOpen ? 'open' : 'closed'"
+  class="bg-white w-[275px] min-h-screen shadow-lg flex flex-col justify-between fixed lg:sticky lg:left-0 z-30"
+>
+  <!-- Top Section -->
+  <div class="flex flex-col">
+    <!-- Logo -->
+    <div class="p-4 mb-6">
+      <img
+        src="assets/images/picsart.png"
+        alt="Nachhaltigkeits Register"
+        class="h-12"
+      />
+    </div>
+
+    <!-- Navigation Links -->
+    <nav class="space-y-1">
+      <a
+        routerLink="/"
+        routerLinkActive="bg-green-50 text-green-700 font-bold"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="flex items-center px-6 py-3 text-gray-600 hover:text-green-500 hover:bg-gray-100 transition-colors"
+      >
+        <i class="pi pi-chart-pie mr-4 text-xl"></i>
+        <span class="text-lg font-medium">{{ "analytics" | translate }}</span>
+      </a>
+
+      <a
+        routerLink="employee"
+        routerLinkActive="bg-green-50 text-green-700 font-bold"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="flex items-center px-6 py-3 text-gray-600 hover:text-green-500 hover:bg-gray-100 transition-colors"
+      >
+        <i class="pi pi-user mr-4 text-xl"></i>
+        <span class="text-lg font-medium">{{ "employee" | translate }}</span>
+      </a>
+
+      <a
+        routerLink="/companies/admin"
+        routerLinkActive="bg-green-50 text-green-700 font-bold"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="flex items-center px-6 py-3 text-gray-600 hover:text-green-500 hover:bg-gray-100 transition-colors"
+      >
+        <i class="pi pi-calculator mr-4 text-xl"></i>
+        <span class="text-lg font-medium">{{
+          "companyAdmin" | translate
+        }}</span>
+      </a>
+
+      <a
+        routerLink="/companies/employee"
+        routerLinkActive="bg-green-50 text-green-700 font-bold"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="flex items-center px-6 py-3 text-gray-600 hover:text-green-500 hover:bg-gray-100 transition-colors"
+      >
+        <i class="pi pi-file mr-4 text-xl"></i>
+        <span class="text-lg font-medium">{{
+          "companyEmployee" | translate
+        }}</span>
+      </a>
+
+      <!-- In component.html -->
+      <!-- <p-tieredMenu
+        [model]="items"
+        [popup]="false"
+        styleClass="custom-tiered-menu"
+      ></p-tieredMenu> -->
+
+      <!-- <a
+        routerLink="/companies/admin"
+        routerLinkActive="bg-green-50 text-green-700 font-bold"
+        class="flex items-center pl-12 pr-6 py-2 text-gray-600 hover:bg-gray-100 transition-colors"
+      >
+        <i class="pi pi-eye mr-3 text-lg"></i>
+        <span class="text-md">{{ "companyAdmin" | translate }}</span>
+      </a> -->
+      <!-- <a
+        routerLink="/companies/employee"
+        routerLinkActive="bg-green-50 text-green-700 font-bold"
+        class="flex items-center pl-12 pr-6 py-2 text-gray-600 hover:bg-gray-100 transition-colors"
+      >
+        <i class="pi pi-file mr-3 text-lg"></i>
+        <span class="text-md">{{ "companyEmployee" | translate }}</span>
+      </a> -->
+
+      <!-- <div>
+        <div
+          (click)="toggleAnalyticsDropdown()"
+          class="flex items-center justify-between px-6 py-3 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors"
+          [class.bg-green-50]="analyticsExpanded"
+          [class.text-green-700]="analyticsExpanded"
+        >
+          <div class="flex items-center" routerLink="/companies/employee">
+            <i class="pi pi-chart-pie mr-4 text-xl"></i>
+            <span class="text-lg font-medium">{{
+              "companies" | translate
+            }}</span>
+          </div>
+          <i
+            class="pi"
+            [ngClass]="
+              analyticsExpanded ? 'pi-chevron-down' : 'pi-chevron-right'
+            "
+          ></i>
+        </div>
+
+        <div *ngIf="analyticsExpanded" @fadeAnimation class="bg-gray-50">
+          <a
+            routerLink="/companies/admin"
+            routerLinkActive="bg-green-50 text-green-700 font-bold"
+            class="flex items-center pl-12 pr-6 py-2 text-gray-600 hover:bg-gray-100 transition-colors"
+          >
+            <i class="pi pi-eye mr-3 text-lg"></i>
+            <span class="text-md">{{ "companyAdmin" | translate }}</span>
+          </a>
+          <a
+            routerLink="/companies/employee"
+            routerLinkActive="bg-green-50 text-green-700 font-bold"
+            class="flex items-center pl-12 pr-6 py-2 text-gray-600 hover:bg-gray-100 transition-colors"
+          >
+            <i class="pi pi-file mr-3 text-lg"></i>
+            <span class="text-md">{{ "companyEmployee" | translate }}</span>
+          </a>
+        </div>
+      </div> -->
+    </nav>
+  </div>
+
+  <!-- Bottom User Profile Section -->
+  <div class="p-4 border-t items-center flex justify-between gap-2">
+    <div (click)="toggleMenu($event)" class="cursor-pointer flex items-center">
+      <div
+        class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg bg-green-500 cursor-pointer"
+      >
+        {{ user?.username | initials }}
+      </div>
+      <div class="ml-3">
+        <p class="font-medium">{{ user?.username }}</p>
+        <p class="text-sm text-gray-500">{{ user?.role }}</p>
+      </div>
+      <i class="ml-1 pi pi-angle-down"></i>
+    </div>
+
+    <div class="flex flex-col items-center justify-center gap-3">
+      <div class="flex flex-col items-center justify-center gap-2">
+        <div class="flex justify-center h-10">
+          <p-button type="button" (onClick)="toggle($event)">
+            <ng-container *ngIf="selectedValue; else selectLanguageTemplate">
+              <div class="flex items-center gap-2">
+                <img
+                  src="assets/images/flag_placeholder.png"
+                  [class]="'flag flag-' + selectedValue.code.toLowerCase()"
+                  style="width: 18px; border-radius: 2px"
+                />
+                <div>{{ selectedValue.name }}</div>
+              </div>
+            </ng-container>
+            <ng-template #selectLanguageTemplate> Select Language </ng-template>
+          </p-button>
+
+          <p-popover #op>
+            <div class="flex flex-col gap-4">
+              <div>
+                <ul class="list-none p-0 m-0 flex flex-col">
+                  <li
+                    *ngFor="let lang of langs"
+                    class="flex items-center gap-2 px-2 py-3 hover:bg-emphasis cursor-pointer rounded-border"
+                    (click)="selectLanguage(lang)"
+                  >
+                    <img
+                      src="assets/images/flag_placeholder.png"
+                      [class]="'flag flag-' + lang.code.toLowerCase()"
+                      style="width: 18px; border-radius: 2px"
+                    />
+                    <div>
+                      <span class="font-medium">{{ lang.name }}</span>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </p-popover>
+        </div>
+      </div>
+
+      <button pButton class="ml-auto w-full h-10" (click)="logout()">
+        <i class="pi pi-sign-out"></i>
+      </button>
+      <p-menu #menu [popup]="true" [model]="profileMenu"></p-menu>
+    </div>
+  </div>
+</aside>
+<app-edit-profile
+  [(visible)]="profileDialog"
+  (confirm)="handleConfirm()"
+  (cancel)="handleCancel()"
+/>

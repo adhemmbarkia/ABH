@@ -1,0 +1,550 @@
+<div class="p-4 relative">
+  @if (loading) {
+  <p-progress-spinner
+    class="absolute inset-0 flex items-center justify-center bg-white/70 z-10"
+    ariaLabel="loading"
+  ></p-progress-spinner>
+  }
+
+  <div class="hidden md:flex justify-between mb-6">
+    <!--  Start Header    -->
+
+    <h1 class="text-xl font-bold">
+      Companies ({{ allCompanies()!.length || 0 }})
+    </h1>
+    <div class="flex gap-2 items-center">
+      <!-- Search Field - Desktop View -->
+      <p-iconfield class="hidden md:block">
+        <input
+          type="text"
+          pInputText
+          placeholder="{{ 'MY_COMPANIES.SEARCH' | translate }}"
+          [(ngModel)]="search"
+          (ngModelChange)="searchCompanies()"
+          class="w-full rounded-full border-none"
+          #searchInput
+          (focusout)="focusOutFunction()"
+        />
+        <p-inputicon styleClass="pi pi-search" />
+      </p-iconfield>
+    
+
+      <!-- Published Button -->
+      <p-button
+        label="Published"
+        icon="pi pi-users"
+        severity="success"
+        [badge]="publishedCount().toString()"
+        badgeSeverity="success"
+        styleClass="m-0"
+        [outlined]="currentStatus() !== 'published'"
+        [ngClass]="{ 'p-button-filled': currentStatus() === 'published' }"
+        (onClick)="filterByPublished()"
+      />
+
+      <!-- Archived Button -->
+      <p-button
+        label="Archieved"
+        icon="pi pi-users"
+        severity="warn"
+        [badge]="archivedCount().toString()"
+        badgeSeverity="warn"
+        styleClass="m-0"
+        [outlined]="currentStatus() !== 'archived'"
+        [ngClass]="{ 'p-button-filled': currentStatus() === 'archived' }"
+        (onClick)="filterByArchived()"
+      />
+
+      <!-- Filter Button  -->
+      <p-button
+        icon="pi pi-sliders-v"
+        [rounded]="true"
+        [outlined]="true"
+        (click)="openFilterMenu($event, menuFilterCompany)"
+        [ngClass]="{ 'active-filter': currentStatus !== null }"
+      />
+      <!-- 
+      <p-button
+        icon="pi pi-plus"
+        label="Add New"
+        [rounded]="true"
+        size="small"
+        (click)="addNew()"
+      /> -->
+    </div>
+
+    <!-- End Header  -->
+  </div>
+
+  <!-- Start Mobile Search  -->
+  <div class="flex md:hidden justify-between mb-6">
+    <h1 class="text-xl font-bold">Companies ({{ companies().length }})</h1>
+    <div class="flex gap-2">
+      <div
+        class="overflow-hidden transition-all duration-1000 ease-in-out"
+        [class.w-0]="!showMobileSearch"
+        [class.w-48]="showMobileSearch"
+        [class.opacity-0]="!showMobileSearch"
+        [class.opacity-100]="showMobileSearch"
+        *ngIf="showMobileSearch"
+      >
+        <!-- For the mobile search input -->
+        <p-iconfield class="w-full">
+          <input
+            type="text"
+            pInputText
+            placeholder="{{ 'MY_COMPANIES.SEARCH' | translate }}"
+            [(ngModel)]="search"
+            (ngModelChange)="searchCompanies()"
+            class="w-full rounded-full border-none"
+            #searchInput
+            (focusout)="focusOutFunction()"
+          />
+          <p-inputicon styleClass="pi pi-search" />
+        </p-iconfield>
+      </div>
+      <div
+        class="transition-all duration-300 ease-in-out"
+        [class.opacity-0]="showMobileSearch"
+        [class.opacity-100]="!showMobileSearch"
+        [class.w-0]="showMobileSearch"
+        [class.w-auto]="!showMobileSearch"
+      >
+        <p-button
+          icon="pi pi-search"
+          [rounded]="true"
+          [outlined]="true"
+          *ngIf="!showMobileSearch"
+          (click)="toggleMobileSearch()"
+        />
+      </div>
+
+      <!-- Filter Button  -->
+      <p-button
+        icon="pi pi-sliders-v"
+        [rounded]="true"
+        [outlined]="true"
+        (click)="openFilterMenu($event, menuFilterCompany)"
+        [ngClass]="{ 'active-filter': currentStatus !== null }"
+      />
+      <p-button icon="pi pi-plus" [rounded]="true" (click)="addNew()" />
+    </div>
+  </div>
+
+  <!-- Filter Menu  -->
+  <p-menu
+    #menuFilterCompany
+    [model]="menuFilterItems"
+    [popup]="true"
+    [appendTo]="'body'"
+    styleClass="surface-100 shadow-lg border-none w-32 p-4 rounded-2xl"
+  >
+    <ng-template pTemplate="item" let-item>
+      <div
+        *ngIf="!item.separator"
+        class="flex items-center gap-3 px-3 py-2 mb-2 rounded-full transition-colors cursor-pointer"
+        [ngClass]="{
+          'text-orange-500 bg-orange-50 hover:bg-orange-100':
+            item.label === 'Pending',
+          'text-teal-600 bg-teal-50 hover:bg-teal-100':
+            item.label === 'Accepted',
+          'text-red-500 bg-red-50 hover:bg-red-100': item.label === 'Rejected',
+          'text-green-600 bg-green-50 hover:bg-green-100':
+            item.label === 'Clear Filter',
+          'border-2': currentStatus === item.label?.toLowerCase(),
+          'border-current': currentStatus === item.label?.toLowerCase()
+        }"
+      >
+        <i [class]="item.icon"></i>
+        <span>{{ item.label }}</span>
+        <i
+          *ngIf="currentStatus === item.label?.toLowerCase()"
+          class="pi pi-check ml-auto"
+        ></i>
+      </div>
+    </ng-template>
+  </p-menu>
+
+  <!-- End Mobile Search  -->
+
+  <!-- Desktop View -->
+  <div class="hidden md:block lg:block">
+    <div class="space-y-2 text-xs">
+      <table class="w-full border-collapse border-spacing-y-2">
+        <thead class="hidden md:table-header-group lg:table-header-group">
+          <tr>
+            <th class="font-semibold px-4 py-4 bg-gray-50 text-left">UID</th>
+            <th class="font-semibold px-4 py-4 bg-gray-50 text-left">
+              Company Name
+            </th>
+            <th
+              class="font-semibold px-4 py-4 bg-gray-50 md:hidden lg:table-cell text-left"
+            >
+              Created By
+            </th>
+            <th class="font-semibold px-4 py-4 bg-gray-50 text-left">
+              Legal Status
+            </th>
+            <th
+              class="font-semibold px-4 py-4 bg-gray-50 md:hidden lg:table-cell text-left"
+            >
+              Request Type
+            </th>
+            <th
+              class="font-semibold px-4 py-4 bg-gray-50 md:hidden lg:table-cell text-left"
+            >
+              Status
+            </th>
+            <th
+              class="font-semibold px-4 py-4 bg-gray-50 md:hidden lg:table-cell text-left"
+            >
+              Approval status
+            </th>
+            <th
+              class="font-semibold px-4 py-4 bg-gray-50 rounded-r-xl text-left"
+            >
+              Actions
+            </th>
+          </tr>
+        </thead>
+
+        <tbody class="divide-y-2 divide-transparent">
+          @for(item of paginatedCompanies(); track item.id) {
+          <tr class="md:table-row lg:table-row h-[55px]">
+            <!-- UID  -->
+            <td class="p-0 md:table-cell lg:table-cell align-middle">
+              <div class="bg-white px-4 py-4 h-[50px] flex items-center">
+                {{ item.uid }}
+              </div>
+            </td>
+
+            <!-- Company Name  -->
+            <td class="p-0 md:table-cell lg:table-cell align-middle">
+              <div class="bg-white px-4 py-4 h-[50px] flex items-center">
+                {{ item.name }}
+              </div>
+            </td>
+
+            <!-- Created By  -->
+            <td class="p-0 md:hidden lg:table-cell align-middle">
+              <div class="bg-white px-4 py-4 h-[50px] flex items-center">
+                {{ item.employee }}
+              </div>
+            </td>
+
+            <!-- Legal Status  -->
+            <td class="p-0 md:hidden lg:table-cell align-middle">
+              <div class="bg-white px-4 py-4 h-[50px] flex items-center">
+                {{ item.legal_information.legal_status }}
+              </div>
+            </td>
+
+            <!-- Request Type  -->
+            <td class="p-0 md:hidden lg:table-cell align-middle">
+              <div class="bg-white px-4 py-4 h-[50px] flex items-center">
+                <p-tag
+                  severity="info"
+                  value="New Company"
+                  *ngIf="item.request_type === 'new_company'"
+                  [rounded]="true"
+                  styleClass="text-xs font-normal p-2"
+                />
+                <p-tag
+                  severity="secondary"
+                  value="Update"
+                  *ngIf="item.request_type === 'update'"
+                  [rounded]="true"
+                  styleClass="text-xs font-normal p-2"
+                />
+                <p-tag
+                  severity="danger"
+                  value="Delete"
+                  *ngIf="item.request_type === 'delete'"
+                  [rounded]="true"
+                  styleClass="text-xs font-normal p-2"
+                />
+              </div>
+            </td>
+
+            <!-- STatus  -->
+            <td class="p-0 md:table-cell lg:table-cell align-middle">
+              <div class="bg-white px-4 py-4 h-[50px] flex items-center">
+                <p-tag
+                  value="Accepted"
+                  *ngIf="item.approval_status === 'accepted'"
+                  [rounded]="true"
+                  styleClass="text-xs font-normal p-2"
+                />
+                <p-tag
+                  severity="warn"
+                  value="Pending"
+                  *ngIf="item.approval_status === 'pending'"
+                  [rounded]="true"
+                  styleClass="text-xs font-normal p-2"
+                />
+                <p-tag
+                  severity="danger"
+                  value="Rejected"
+                  *ngIf="item.approval_status === 'rejected'"
+                  [rounded]="true"
+                  styleClass="text-xs font-normal p-2"
+                />
+              </div>
+            </td>
+
+            <!-- Status 2  -->
+
+            <td class="p-0 md:table-cell lg:table-cell align-middle">
+              <div class="bg-white px-4 py-4 h-[50px] flex items-center">
+                @if (!item.is_archived) {
+                <p-tag
+                  value="Published"
+                  [rounded]="true"
+                  styleClass="text-xs font-normal p-2"
+                />
+                } @if (item.is_archived) {
+                <p-tag
+                  severity="warn"
+                  value="Archieved"
+                  [rounded]="true"
+                  styleClass="text-xs font-normal p-2"
+                />
+                }
+              </div>
+            </td>
+
+            <!-- Actions  -->
+
+            <td class="p-0 md:table-cell lg:table-cell align-middle">
+              <div
+                class="bg-white px-4 py-4 h-[50px] flex items-center gap-2 rounded-r-xl"
+              >
+                @if (item.approval_status !== 'rejected' && item.approval_status
+                !== 'accepted') {
+
+                <!-- Accept  -->
+                <p-button
+                  (click)="acceptCompany(item.id)"
+                  label="Accept"
+                  size="small"
+                  [rounded]="true"
+                  styleClass="bg-primary bg-opacity-10 border-none text-primary px-5 py-2"
+                />
+
+                <!-- Reject  -->
+                <p-button
+                  (click)="rejectCompany(item.id)"
+                  variant="outlined"
+                  label="Reject"
+                  size="small"
+                  [rounded]="true"
+                  styleClass="px-5 py-2"
+                />
+
+                }
+
+                <div class="hidden lg:block">
+                  <p-button
+                    icon="pi pi-ellipsis-v"
+                    size="small"
+                    [text]="true"
+                    (click)="openMenu($event, item, menuCompany)"
+                  />
+                </div>
+                <div class="lg:hidden">
+                  <p-button
+                    icon="pi pi-ellipsis-v"
+                    size="small"
+                    [text]="true"
+                    (click)="openMenu($event, item, menuCompany)"
+                  />
+                </div>
+              </div>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+
+      <!-- No Company Employee Message -->
+      <div
+        *ngIf="paginatedCompanies().length === 0"
+        class="no-employee-message"
+      >
+        <p>No Companies Employees</p>
+      </div>
+
+      <!-- Pagination  -->
+      <p-paginator
+        *ngIf="paginatedCompanies().length !== 0"
+        [rows]="rowsPerPage()"
+        [totalRecords]="totalCompanies()"
+        [rowsPerPageOptions]="[2, 5, 10]"
+        (onPageChange)="onPageChange($event)"
+        styleClass="border-0 mb-4 mt-1"
+        [classList]="'justify-end'"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
+        [first]="first"
+        [showCurrentPageReport]="true"
+        [showPageLinks]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
+      >
+      </p-paginator>
+    </div>
+  </div>
+  <!--  -->
+
+  <!-- Mobile View -->
+  <div class="block grid grid-cols-1 md:hidden">
+    <div
+      *ngFor="let item of originalCompanies()"
+      class="bg-white rounded-3xl p-4 mb-4 shadow-sm"
+    >
+      <div class="flex justify-between items-center mb-2">
+        <div class="flex items-center gap-3 mb-2">
+          <p-avatar
+            image="assets/images/profile_avatar.png"
+            styleClass="mr-2"
+            size="large"
+            shape="circle"
+          ></p-avatar>
+          <div>
+            <p class="font-bold">{{ item.companyName }}</p>
+            <p class="text-gray-600">{{ item.createdBy }}</p>
+          </div>
+        </div>
+        <p-button
+          icon="pi pi-ellipsis-v"
+          size="small"
+          [text]="true"
+          (click)="openMenu($event, item, menuCompany)"
+        />
+      </div>
+      <div class="flex justify-between items-center mb-1">
+        <p class="font-bold">{{ item.id }}</p>
+        <p-tag
+          [severity]="item.status === 'Published' ? 'success' : 'warn'"
+          value="{{ item.status }}"
+          [rounded]="true"
+          styleClass="text-xs text-orange-600 font-normal p-2"
+        />
+      </div>
+      <p-divider />
+
+      <div class="flex gap-2 justify-center w-full">
+        <p-button
+          *ngIf="item.status !== 'Published'"
+          label="Accept"
+          size="small"
+          [rounded]="true"
+          styleClass="bg-green-50 text-primary w-full border-none "
+          class="flex-grow"
+        />
+        <p-button
+          *ngIf="item.status !== 'Published'"
+          variant="outlined"
+          label="Reject"
+          size="small"
+          [rounded]="true"
+          styleClass="w-full"
+          class="flex-grow"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 
+   -->
+<p-menu
+  #menuCompany
+  [model]="menuItems"
+  [popup]="true"
+  [appendTo]="'body'"
+  styleClass="surface-100 shadow-lg border-none w-32 p-4 rounded-2xl"
+>
+  <ng-template pTemplate="item" let-item>
+    <div
+      class="flex items-center gap-3 px-3 py-2 mb-2 rounded-full transition-colors cursor-pointer"
+      [ngClass]="{
+        'text-teal-600 bg-teal-50 hover:bg-teal-100': item.label === 'View',
+        'text-orange-500 bg-orange-50 hover:bg-orange-100':
+          item.label === 'Edit',
+        'text-red-500 bg-red-50 hover:bg-red-100': item.label === 'Delete'
+      }"
+    >
+      <i [class]="item.icon"></i>
+      <span>{{ item.label }}</span>
+    </div>
+  </ng-template>
+</p-menu>
+<!--  -->
+<p-dialog
+  [(visible)]="showEditDialog"
+  [modal]="true"
+  [style]="{ width: '450px' }"
+  [contentStyle]="{ padding: '2rem' }"
+  styleClass="rounded-2xl"
+  maskStyleClass="backdrop-blur-md"
+>
+  <ng-template #header>
+    <div class="inline-flex items-center justify-center gap-2">
+      <h2 class="text-xl font-bold">Edit /add</h2>
+    </div>
+  </ng-template>
+
+  <div class="flex flex-col gap-6">
+    <div class="flex flex-col gap-2">
+      <input
+        type="text"
+        pInputText
+        [(ngModel)]="selectedCompany!.name"
+        class="p-3 border-gray-300 rounded-lg"
+        placeholder="Full Name"
+      />
+    </div>
+
+    <div class="flex flex-col gap-2"></div>
+    <div class="flex flex-col gap-2"></div>
+    <div class="flex flex-col gap-2"></div>
+  </div>
+  <div class="flex flex-col gap-3 mt-4">
+    <p-button
+      icon="pi pi-check"
+      [rounded]="true"
+      label="Save"
+      size="small"
+      styleClass="w-full"
+    >
+    </p-button>
+    <p-button
+      label="Cancel"
+      icon="pi pi-times"
+      [rounded]="true"
+      (click)="showEditDialog = false"
+      size="small"
+      [outlined]="true"
+      styleClass="w-full"
+    >
+    </p-button>
+  </div>
+  <ng-template #footer> </ng-template>
+</p-dialog>
+
+<app-view-company-employee-modal
+  [(visible)]="modalVisible"
+  [company]="companyData"
+  (edit)="handleEdit()"
+  (delete)="handleDelete()"
+>
+</app-view-company-employee-modal>
+
+<!-- Add or edit a company dialog -->
+<app-add-edit-company
+  [(visible)]="addEditModalVisible"
+  [company]="companyData"
+  (edit)="handleEdit()"
+  [formType]="formType"
+  (delete)="handleDelete()"
+  [loadAllCompanies]="loadData"
+>
+</app-add-edit-company>
