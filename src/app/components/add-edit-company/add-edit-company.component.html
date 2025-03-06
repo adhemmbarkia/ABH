@@ -184,8 +184,69 @@
                 </span>
               </div>
             </div> -->
+            <!-- Legal Information -->
 
-            <div class="w-full max-w-md">
+            <div class="flex flex-col gap-3">
+              <label class="text-gray-600 font-medium">{{
+                "VIEW_COMPANY.LEGAL_INFORMATION.LEGAL_FORM" | translate
+              }}</label>
+              <div class="relative">
+                <p-select 
+                  [options]="legalFormOptions" 
+                  
+                  optionLabel="name" 
+                  formControlName="legal_form"
+                  [ngClass]="{
+                    'border-red-500 focus:!border-red-500':
+                      companyForm.get('legal_information.legal_form')
+                        ?.invalid &&
+                      companyForm.get('legal_information.legal_form')?.touched
+                  }"
+                  placeholder="Select a legal form"
+                  class="w-full !border-0 !border-b-2 border-gray-300 focus:outline-none rounded-none 
+                  focus:!border-b-2 focus:!border-teal-600 shadow-none appearance-none bg-white text-gray-400">
+                  
+                  <ng-template pTemplate="selectedItem" let-selectedOption>
+                    <div class="flex items-center justify-between">
+                      <span>{{ selectedOption.name }}</span>
+                    </div>
+                  </ng-template>
+                  
+                  <ng-template let-item pTemplate="item">
+                    <div class="flex items-center">
+                      <div class="!flex !gap-1">
+                        <p-button 
+                          icon="pi pi-pencil" 
+                          severity="success" 
+                          text 
+                          size="small"
+                          (click)="openDialog('edit', item)"
+                        />
+                        <p-button 
+                          icon="pi pi-trash" 
+                          severity="danger" 
+                          text 
+                          size="small"
+                          (click)="confirmDelete(item)"
+                        />
+                      </div>
+                      <span class="flex-grow">{{ item.name }}</span>
+                      
+                    </div>
+                  </ng-template>
+                  <ng-template #footer>
+                    <div class="p-3">
+                        <p-button label="Add New" (click)="openDialog('add')" fluid severity="primary" text size="small" icon="pi pi-plus" />
+                    </div>
+                </ng-template>
+                </p-select>
+                
+                
+              </div>
+              
+            </div>
+
+            <!-- <div class="w-full max-w-md">
               <div class="p-4 border-b flex items-center justify-between">
                 <span class="text-gray-700 font-medium">Choose the legal form</span>
                 <button
@@ -235,7 +296,7 @@
                   </div>
                 </div>
               }
-            </div>
+            </div> -->
 
             <!-- Registration  Date  -->
             <div class="flex flex-col gap-3">
@@ -610,7 +671,7 @@
                         <i
                           class="pi pi-exclamation-circle text-red-500 mr-1 ml-1"
                         ></i>
-                        {{ADD_EDIT_COMPANY.DIRECTOR_NAME_IS_REQUIRED" | translate}}
+                        {{"ADD_EDIT_COMPANY.DIRECTOR_NAME_IS_REQUIRED" | translate}}
                       </span>
                     </div>
                   </div>
@@ -644,7 +705,7 @@
                         <i
                           class="pi pi-exclamation-circle text-red-500 mr-1 ml-1"
                         ></i>
-                        {{ADD_EDIT_COMPANY.DIRECTOR_ROLE_IS_REQUIRED" | translate}}
+                        {{"ADD_EDIT_COMPANY.DIRECTOR_ROLE_IS_REQUIRED" | translate}}
                       </span>
                     </div>
                   </div>
@@ -663,9 +724,7 @@
                       type="text"
                       pInputText
                       class="w-full px-3 py-2 !border-0 !border-b-2 border-gray-300 focus:outline-none rounded-none focus:!border-b-2 focus:!border-teal-600 shadow-none"
-                      [placeholder]="
-                        'ADD_EDIT_COMPANY.ENTER_AUTHORIZED_PERSONS' | translate
-                      "
+                      placeholder="{{'ADD_EDIT_COMPANY.ENTER_AUTHORIZED_PERSONS' | translate}}"
                       required="true"
                       formControlName="signature"
                       [ngClass]="{
@@ -685,7 +744,7 @@
                         <i
                           class="pi pi-exclamation-circle text-red-500 mr-1 ml-1"
                         ></i>
-                        {{ADD_EDIT_COMPANY.AUTHORIZED_SIGNATORIES_IS_REQUIRED" | translate}}
+                        {{"ADD_EDIT_COMPANY.AUTHORIZED_SIGNATORIES_IS_REQUIRED" | translate}}
                       </span>
                     </div>
                   </div>
@@ -1192,3 +1251,28 @@
     </div>
   </form>
 </p-dialog>
+
+<p-dialog 
+  [(visible)]="dialogVisible"  [style]="{ width: '25rem' }"
+  [header]="currentAction === 'add' ? 'Add Legal Form' : 'Edit Legal Form'"
+  [modal]="true">
+  <form (ngSubmit)="saveForm()">
+    <!-- Add your form fields here -->
+    <input [(ngModel)]="currentForm.name" name="name" pInputText placeholder="Name"
+    class="w-full px-3 py-2 !border-0 !border-b-2 border-gray-300 focus:outline-none rounded-none focus:!border-b-2 focus:!border-teal-600 shadow-none"
+    >
+    <!-- Add more fields as needed -->
+    <!-- <div class="flex justify-end mt-4">
+      <p-button type="submit" label="Save" severity="primary" />
+    </div> -->
+    <div class="flex justify-end gap-2  mt-4">
+      <p-button label="Cancel" severity="secondary"size="small" (click)="dialogVisible = false" />
+      <p-button type="submit" label="Save" severity="primary" size="small" />
+  </div>
+  </form>
+</p-dialog>
+
+<!-- Confirmation Dialog -->
+<p-confirmDialog 
+
+/>

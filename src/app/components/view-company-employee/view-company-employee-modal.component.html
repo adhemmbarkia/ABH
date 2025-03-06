@@ -142,12 +142,30 @@
               {{ selectedCompany?.name }}
             </span>
             <span class="text-gray-900 font-medium flex items-center">
-              {{ selectedCompany?.request_type }}
+              {{ selectedCompany.request_type?.toLowerCase() | translate }}
             </span>
-            <span class="text-gray-900 font-medium flex items-center">
-              {{ selectedCompany?.approval_status }}
-            </span>
+            <!-- <span class="text-gray-900 font-medium flex items-center">
+              {{ selectedCompany?.approval_status==="pending"?("pending_review" | translate):"" }}
+
+            </span> -->
+            <p-tag
+            severity="warn"
+            value="{{'pending_review' | translate}}"
+            *ngIf="selectedCompany?.approval_status==='pending' || selectedCompany?.request_type==='update' || selectedCompany?.request_type==='delete'"
+            [rounded]="true"
+            styleClass="text-xs font-normal px-1 py-2"
+          />
+          <p-tag
+                  value="{{'Accepted' | translate }}"
+                  *ngIf="selectedCompany.approval_status === 'accepted' && selectedCompany?.request_type!='update'"
+                  [rounded]="true"
+                  styleClass="text-xs font-normal p-2"
+            />
+
+            
+
           </div>
+
         </div>
       </div>
 
@@ -473,7 +491,58 @@
   </div>
 
   <!-- Action Buttons -->
-  <div class="flex gap-4 mt-6">
+  <div class="flex gap-4 mt-6" *ngIf="selectedCompany?.request_type==='new_company' &&  selectedCompany?.approval_status==='pending'"> 
+   
+    <button
+         class="flex-1 bg-teal-700 text-white py-2 px-4 rounded-lg hover:bg-teal-800 transition-colors"
+                (click)="acceptCompany(selectedCompany.id)"
+              >
+                {{ "accept_this_new_company" | translate }}
+              </button>
+      <button
+              class="flex-1 border border-teal-700 text-teal-700 py-2 px-4 rounded-lg hover:bg-teal-50 transition-colors"
+              (click)="rejectCompany(selectedCompany.id)"
+            >
+              {{ "Reject" | translate }}
+      </button>
+              
+  </div>
+
+  <div class="flex gap-4 mt-6" *ngIf="selectedCompany?.request_type==='delete' &&  selectedCompany?.approval_status==='pending'"> 
+   
+    <button
+         class="flex-1 bg-teal-700 text-white py-2 px-4 rounded-lg hover:bg-teal-800 transition-colors"
+                (click)="archiveCompany(selectedCompany.id)"
+              >
+                {{ "archive_company" | translate }}
+              </button>
+      <button
+              class="flex-1 border border-teal-700 text-teal-700 py-2 px-4 rounded-lg hover:bg-teal-50 transition-colors"
+              (click)="visible=false"
+            >
+              {{ "cancel" | translate }}
+      </button>
+              
+  </div>
+
+  <div class="flex gap-4 mt-6" *ngIf="selectedCompany?.request_type==='update' "> 
+   
+    <button
+         class="flex-1 bg-teal-700 text-white py-2 px-4 rounded-lg hover:bg-teal-800 transition-colors"
+                (click)="acceptEdit(selectedCompany.id)"
+              >
+                {{ "accept_this_edit" | translate }}
+              </button>
+      <button
+              class="flex-1 border border-teal-700 text-teal-700 py-2 px-4 rounded-lg hover:bg-teal-50 transition-colors"
+              (click)="rejectCompany(selectedCompany.id)"
+            >
+              {{ "Reject" | translate }}
+      </button>
+
+  </div>
+
+  <div class="flex gap-4 mt-6" *ngIf="selectedCompany?.request_type==='new_company' &&  selectedCompany?.approval_status==='accepted'"> 
     <button
       class="flex-1 bg-teal-700 text-white py-2 px-4 rounded-lg hover:bg-teal-800 transition-colors"
       (click)="onEdit()"

@@ -113,6 +113,7 @@ export class CompanyEmployeeComponent implements OnInit {
 
         this.totalRecords = response.companies.length;
         console.log("companies", this.totalRecords);
+        console.log("response.companies ", response.companies);
         // this.updatePaginatedEmployees();
 
         // Calculate counts for badges

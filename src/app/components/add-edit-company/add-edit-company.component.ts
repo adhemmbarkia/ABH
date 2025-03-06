@@ -8,7 +8,7 @@ import {
 import { CommonModule } from "@angular/common";
 import { DialogModule } from "primeng/dialog";
 import { ButtonModule } from "primeng/button";
-
+import { SelectModule } from 'primeng/select';
 import { DividerModule } from "primeng/divider";
 import { AccordionModule } from "primeng/accordion";
 import { CompanyDetails } from "../../models/company.interface";
@@ -29,12 +29,14 @@ import { CompanyService } from "../../services/company.service";
 import { InputTextModule } from "primeng/inputtext";
 import { MultiSelectModule } from "primeng/multiselect";
 import { nonEmptyArrayValidator } from "../../utils/validations/nonEmptyArrayValidator.validator";
-import { MessageService } from "primeng/api";
+import { ConfirmationService, MessageService } from "primeng/api";
 import { Toast } from "primeng/toast";
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { CompanyV } from "../../models/companyView.model";
 import { TranslateModule, TranslateService } from "@ngx-translate/core";
 import { LanguageService } from "../../services/language.service";
 import { switchMap } from "rxjs";
+
 @Component({
   selector: "app-add-edit-company",
   standalone: true,
@@ -50,10 +52,12 @@ import { switchMap } from "rxjs";
     MultiSelectModule,
     Toast,
     TranslateModule,
+    SelectModule,
+    ConfirmDialogModule
   ],
   templateUrl: "./add-edit-company.component.html",
   styleUrl: "./add-edit-company.component.css",
-  providers: [MessageService],
+  providers: [ConfirmationService, MessageService]
 })
 export class AddEditCompanyComponent {
   @Input() visible: boolean = false;
@@ -94,7 +98,7 @@ export class AddEditCompanyComponent {
     { label: "Archived", value: "archived" },
   ];
 
-  // legalFormOptions!: LegalForm[];
+ 
 
   headquartersOptions = [
     { label: "Zurich", value: "Zurich" },
@@ -122,16 +126,25 @@ export class AddEditCompanyComponent {
   branchLocationsOptions: { label: string; value: string }[] = [];
 
 
-  legalFormOptions: LegalForm[] = [
-    { id: 1, name: 'GmbH' },
-    { id: 2, name: 'Sarl' },
-    { id: 3, name: 'Ag' },
-    { id: 4, name: 'LLC' },
-  ];
+  // legalFormOptions: LegalForm[] = [
+  //   { id: 1, name: 'GmbH' },
+  //   { id: 2, name: 'Sarl' },
+  //   { id: 3, name: 'Ag' },
+  //   { id: 4, name: 'LLC' },
+  // ];
+
+   legalFormOptions!: LegalForm[];
 
   newOptionText: string = '';
   editingOption: LegalForm | null = null;
   isDropdownOpen: boolean = true;
+  // 
+  selectedRow: any;
+   dialogVisible = false;
+  // confirmDialogVisible = false;
+  currentAction: 'add' | 'edit' = 'add';
+  currentForm: any = {};
+  // 
 
   toggleDropdown() {
     this.isDropdownOpen = !this.isDropdownOpen;
@@ -175,7 +188,8 @@ export class AddEditCompanyComponent {
     private breakpointObserver: BreakpointObserver,
     private employeeService: EmployeeService,
     private companyService: CompanyService,
-    private fb: FormBuilder,
+    private fb: FormBuilder, 
+    private confirmationService: ConfirmationService, 
     private messageService: MessageService,
     private translate: TranslateService,
     private languageService: LanguageService
@@ -192,9 +206,8 @@ export class AddEditCompanyComponent {
 
   ngOnInit() {
     // get Legal Forms from the Server
-    this.employeeService.getLegalForms().subscribe((legalForms) => {
-      this.legalFormOptions = legalForms;
-    });
+    this.loadLegalForms();
+   
 
     console.log("Received loadAllCompanies function:", this.loadAllCompanies);
 
@@ -436,6 +449,26 @@ export class AddEditCompanyComponent {
     this.delete.emit();
   }
 
+  loadLegalForms(){
+    // this.employeeService.getLegalForms().subscribe((legalForms) => {
+    //   this.legalFormOptions = legalForms;
+    // });
+
+    this.employeeService.getLegalForms().subscribe({
+      next: (data) => {
+        this.legalFormOptions = data;
+      },
+      error: (err) => {
+        this.messageService.add({
+          severity: 'error', 
+          summary: 'Error', 
+          detail: 'Failed to load legal forms'
+        });
+      }
+    });
+
+  }
+
   //My code
   addressForm!: FormGroup;
 
@@ -481,6 +514,126 @@ export class AddEditCompanyComponent {
       this.uploadedFiles.push(...Array.from(event.dataTransfer.files));
       this.uploadSuccess = true;
     }
+  }
+
+  openDialog(action: 'add' | 'edit', item?: any) {
+    this.currentAction = action;
+    this.currentForm = action === 'edit' ? {...item} : {};
+    this.dialogVisible = true;
+  }
+
+  saveForm() {
+    if (this.currentAction === 'add') {
+      this.employeeService.createLegalForm(this.currentForm).subscribe({
+        next: () => {
+          this.resetLegalForm();
+          this.dialogVisible = false;
+          this.messageService.add({
+            severity: 'success', 
+            summary: 'Success', 
+            detail: 'Legal form added'
+          });
+        },
+        error: () => {
+          this.messageService.add({
+            severity: 'error', 
+            summary: 'Error', 
+            detail: 'Failed to add legal form'
+          });
+        }
+      });
+    } else {
+      this.employeeService.updateLegalForm(this.currentForm.id, this.currentForm).subscribe({
+        next: () => {
+          this.resetLegalForm();
+          this.dialogVisible = false;
+          this.messageService.add({
+            severity: 'success', 
+            summary: 'Success', 
+            detail: 'Legal form updated'
+          });
+        },
+        error: () => {
+          this.messageService.add({
+            severity: 'error', 
+            summary: 'Error', 
+            detail: 'Failed to update legal form'
+          });
+        }
+      });
+    }
+  }
+
+  resetLegalForm() {
+    this.companyForm.get('legal_information.legal_form')!.reset(''); //not work
+    // this.companyForm.patchValue({
+    //   legal_information: {
+    //     legal_form: null
+    //   }
+    // });
+    // this.companyForm.get('legal_information')!.patchValue({
+    //   legal_form: null
+    // }); // also not work
+    
+    // If you want to trigger a fresh load of legal forms
+    this.loadLegalForms();
+  }
+
+  confirmDelete(item: any) {
+    this.selectedRow = item;
+   // this.confirmDialogVisible = true;
+  // }
+
+  // confirm1(event: Event) {
+    this.confirmationService.confirm({
+       // target: event.target as EventTarget,
+        message: 'Are you sure you want to delete this legal form?',
+        header: 'Confirm Deletion',
+        closable: true,
+        closeOnEscape: true,
+        icon: 'pi pi-exclamation-triangle',
+        rejectButtonProps: {
+            label: 'Cancel',
+            severity: 'secondary',
+            outlined: true,
+        },
+        acceptButtonProps: {
+            label: 'Delete',
+        },
+        accept: () => {
+          this.deleteLegalForm()
+            //this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted' });
+        },
+        reject: () => {
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Rejected',
+                detail: 'You have rejected',
+                life: 3000,
+            });
+        },
+    });
+}
+
+  deleteLegalForm() {
+    this.employeeService.deleteLegalForm(this.selectedRow.id).subscribe({
+      next: () => {
+        this.resetLegalForm();
+       // this.confirmDialogVisible = false;
+        this.messageService.add({
+          severity: 'success', 
+          summary: 'Success', 
+          detail: 'Legal form deleted'
+        });
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error', 
+          summary: 'Error', 
+          detail: 'Failed to delete legal form'
+        });
+      }
+    });
   }
 }
 function SECTOR_CHOICES(arg0: string, arg1: string) {

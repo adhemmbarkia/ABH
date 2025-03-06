@@ -122,6 +122,17 @@
     "EMAIL": "Email",
     "COMPANY_NAME": "Company Name",
     "CREATED_BY": "Created By"
-  }
+  },
+
+  "choose_the_legal_form" :"Choose the legal form",
+  "new_company":"New company",
+  "pending_review":"Pending Review",
+  "accepted":"Accepted",
+  "accept_this_new_company":"Accept This New Company",
+  "accept_this_edit":"Accept This Edit",
+  "update":"Update",
+  "delete":"Delete",
+  "archive_company":"Archive Company",
+  "cancel":"Cancel"
 
 }

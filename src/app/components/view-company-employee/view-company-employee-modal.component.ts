@@ -9,7 +9,7 @@ import {
 import { CommonModule } from "@angular/common";
 import { DialogModule } from "primeng/dialog";
 import { ButtonModule } from "primeng/button";
-
+import { TagModule } from "primeng/tag";
 import { DividerModule } from "primeng/divider";
 import { AccordionModule } from "primeng/accordion";
 import { Company } from "../../models/company.interface";
@@ -32,7 +32,8 @@ import { Observable } from "rxjs";
     DividerModule,
     ButtonModule,
     AppPipesModule,
-    TranslateModule
+    TranslateModule,
+    TagModule
   ],
   templateUrl: "./view-company-employee-modal.component.html",
   styleUrl: "./view-company-employee-modal.component.css",
@@ -117,5 +118,40 @@ export class ViewCompanyEmployeeModalComponent  {
 
   onDelete() {
     this.delete.emit();
+  }
+
+  acceptCompany(id: number) {
+    // this.loading = true;
+    this.companyService.acceptCompany(id).subscribe({
+      next: (response) => {
+        console.log("Company approved successfully", response);
+        // this.loadData();
+        // this.loading = false;
+      },
+      error: (error) => {
+        console.error("Error approving company:", error);
+      },
+    });
+  }
+
+  // Reject a company
+  rejectCompany(id: number) {
+    this.companyService.rejectCompany(id).subscribe({
+      next: (response) => {
+        console.log("Company rejected successfully", response);
+        // this.loadData();
+      },
+      error: (error) => {
+        console.error("Error approving company:", error);
+      },
+    });
+  }
+
+  acceptEdit(id:any){
+    console.log("accept edit")
+  }
+  archiveCompany(id:any){
+    console.log("archive company")
+
   }
 }

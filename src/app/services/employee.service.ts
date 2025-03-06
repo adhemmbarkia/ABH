@@ -93,4 +93,16 @@ export class EmployeeService {
       map(dept => dept.name)
     );
   }
+
+  createLegalForm(form: any): Observable<any> {
+    return this.httpClient.post<any>(`${this.API_URL}/employee/legal-forms/`, form);
+  }
+
+  updateLegalForm(id: string, form: any): Observable<any> {
+    return this.httpClient.patch<any>(`${this.API_URL}/employee/legal-forms/${id}/`, form);
+  }
+
+  deleteLegalForm(id: string): Observable<any> {
+    return this.httpClient.delete<any>(`${this.API_URL}/employee/legal-forms/${id}/`);
+  }
 }
