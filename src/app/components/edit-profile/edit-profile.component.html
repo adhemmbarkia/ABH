@@ -1,0 +1,114 @@
+<p-dialog
+  [(visible)]="visible"
+  [modal]="true"
+  [contentStyle]="{'padding': '2rem'}"
+  styleClass="rounded-2xl"
+  [closable]="false"
+  maskStyleClass="backdrop-blur-md"
+  [style]="{ width: '585px' }"
+  [breakpoints]="{
+    '1200px': '585px',
+    '992px': '585px',
+    '768px': '585px',
+    '599px': '100vw'
+  }">
+  <ng-template pTemplate="header">
+    <h2 *ngIf="!isMobile" class="text-xl w-full font-bold">Edit Profile</h2>
+    <div class="flex items-center w-full" [ngClass]="{'justify-end': !isMobile, 'justify-start': isMobile}">
+      <button *ngIf="!isMobile" pButton icon="pi pi-times" class="p-button-text" size="large" (click)="onCancel()"></button>
+      <p-button *ngIf="isMobile" label="Back" icon="pi pi-arrow-left" variant="outlined" severity="contrast" (onClick)="onCancel()" />
+    </div>
+  </ng-template>
+  <p-divider class="-mt-8"/>
+  <h2 *ngIf="isMobile" class="text-xl font-bold">Edit Profile</h2>
+  
+  <!-- Radio button selection - centered -->
+  <div class="flex justify-center gap-6 mb-6">
+    <div class="field-radiobutton flex align-items-center">
+      <p-radioButton name="editMode" value="profile" [(ngModel)]="editType" inputId="profile"></p-radioButton>
+      <label for="profile" class="ml-2">Update Profile</label>
+    </div>
+    <div class="field-radiobutton flex align-items-center">
+      <p-radioButton name="editMode" value="password" [(ngModel)]="editType" inputId="password"></p-radioButton>
+      <label for="password" class="ml-2">Change Password</label>
+    </div>
+  </div>
+  
+  <!-- Update Profile Form -->
+  <form *ngIf="editType === 'profile'" [formGroup]="profileForm" class="flex flex-col gap-6">
+    <div class="flex flex-col gap-2">
+      <input type="text"
+        pInputText
+        formControlName="username"
+        class="w-full px-3 py-2 !border-0 !border-b-2 border-gray-300 focus:outline-none rounded-none focus:!border-b-2 focus:!border-teal-600 shadow-none"
+        placeholder="Full Name">
+      <small class="text-red-500" *ngIf="profileForm.get('username')?.invalid && profileForm.get('username')?.touched">
+        Username is required
+      </small>
+    </div>
+    <div class="flex flex-col gap-2">
+      <input type="email"
+        pInputText
+        [value]="user?.email"
+        class="w-full px-3 py-2 !border-0 !border-b-2 border-gray-300 focus:outline-none rounded-none focus:!border-b-2 focus:!border-teal-600 shadow-none"
+        disabled=true>
+    </div>
+  </form>
+  
+  <!-- Change Password Form -->
+  <form *ngIf="editType === 'password'" [formGroup]="passwordForm" class="flex flex-col gap-6">
+    <div class="flex flex-col gap-2">
+      <input type="email"
+        pInputText
+        [value]="user?.email"
+        class="w-full px-3 py-2 !border-0 !border-b-2 border-gray-300 focus:outline-none rounded-none focus:!border-b-2 focus:!border-teal-600 shadow-none"
+        disabled=true>
+    </div>
+    <div class="flex flex-col gap-2">
+      <input type="password"
+        pInputText
+        formControlName="newPassword"
+        class="w-full px-3 py-2 !border-0 !border-b-2 border-gray-300 focus:outline-none rounded-none focus:!border-b-2 focus:!border-teal-600 shadow-none"
+        placeholder="New Password">
+      <small class="text-red-500" *ngIf="passwordForm.get('newPassword')?.errors?.['required'] && passwordForm.get('newPassword')?.touched">
+        Password is required
+      </small>
+      <small class="text-red-500" *ngIf="passwordForm.get('newPassword')?.errors?.['minlength'] && passwordForm.get('newPassword')?.touched">
+        Password must be at least 8 characters
+      </small>
+    </div>
+    <div class="flex flex-col gap-2">
+      <input type="password"
+        pInputText
+        formControlName="confirmPassword"
+        class="w-full px-3 py-2 !border-0 !border-b-2 border-gray-300 focus:outline-none rounded-none focus:!border-b-2 focus:!border-teal-600 shadow-none"
+        placeholder="Re-enter New Password">
+      <small class="text-red-500" *ngIf="passwordForm.get('confirmPassword')?.errors?.['required'] && passwordForm.get('confirmPassword')?.touched">
+        Please confirm your password
+      </small>
+      <small class="text-red-500" *ngIf="passwordForm.hasError('passwordMismatch') && passwordForm.get('confirmPassword')?.touched">
+        Passwords do not match
+      </small>
+    </div>
+  </form>
+  
+  <!-- Error Message Display -->
+  <small class="text-red-500 mt-2" *ngIf="errorMessage">{{ errorMessage }}</small>
+  
+  <div class="flex flex-col gap-3 mt-6">
+    <p-button
+      [rounded]="true"
+      [label]="editType === 'profile' ? 'Update Profile' : 'Change Password'"
+      styleClass="w-full"
+      [loading]="loading"
+      (onClick)="editType === 'profile' ? updateProfilee() : updatePasswordd()">
+    </p-button>
+    <p-button
+      label="Cancel"
+      [rounded]="true"
+      (click)="onCancel()"
+      [outlined]="true"
+      styleClass="w-full">
+    </p-button>
+  </div>
+</p-dialog>

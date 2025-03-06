@@ -1,0 +1,126 @@
+{
+  "APPROVED": "Approuvé",
+  "PENDING": "En attente",
+  "REJECTED": "Rejeté",
+  "CLEAR_FILTER": "Effacer le filtre",
+  "SEARCH": "Rechercher",
+  "STATUS": "Statut",
+  "dashboard": "Tableau de bord",
+  "analytics": "Analytique",
+  "employee": "Employé",
+  "companies": "Entreprises",
+  "companyAdmin": "Mes entreprises",
+  "companyEmployee": "Employé Entreprises",
+  "MY_COMPANIES": {
+    "COMPANIES": "Entreprises",
+    "SEARCH": "Recherche",
+    "CANCEL": "Annuler",
+    "PUBLISHED": "Publié",
+    "ARCHIEVED": "Archivé",
+    "COMPANY_NAME": "Nom de l'entreprise",
+    "CREATED_BY": "Créé par",
+    "LEGAL_STATUS": "Statut juridique",
+    "REQUEST_TYPE": "Type de demande",
+    "STATUS": "Statut",
+    "APPROVAL_STATUS": "Statut d'approbation",
+    "ACTIONS": "Actions",
+    "ADD_NEW": "Ajouter une nouvelle entreprise",
+    "VIEW": "Voir",
+    "DELETE": "Supprimer",
+    "EDIT": "Modifier"
+  },
+  "VIEW_COMPANY": {
+    "COMPANY_INFORMATION": {
+      "COMPANY_INFORMATION": "Informations sur l'entreprise",
+      "COMPANY_NAME": "Nom de l'entreprise",
+      "APPROVAL_STATUS": "Statut d'approbation",
+      "REQUEST_TYPE": "Type de requête",
+      "REQUEST_STATUS": "État de la requête"
+    },
+    "LEGAL_INFORMATION": {
+      "LEGAL_INFORMATION": "Informations légales",
+      "LEGAL_FORM": "Forme juridique",
+      "REGISTRATION_DATE": "Date d'enregistrement",
+      "LEGAL_STATUS": "Statut légal",
+      "SECTOR": "Secteur"
+    },
+    "CREATED_BY": {
+      "CREATED_BY": "Créé par",
+      "FULL_NAME": "Nom complet",
+      "EMAIL": "E-mail"
+    },
+    "ADDRESS_INFORMATION": {
+      "ADDRESS_INFORMATION": "Informations sur l'adresse",
+      "HEADQUARTERS": "Siège social",
+      "BRANCH_LOCATIONS": "Succursales"
+    },
+    "MANAGEMENT_DETAILS": {
+      "MANAGEMENT_DETAILS": "Détails de gestion",
+      "DIRECTORS": "Directeurs",
+      "SIGNATORIES": "Signataires"
+    },
+    "ACTIVITIES_IN_THE_FIELD_OF_SUSTAINABILITY": {
+      "ACTIVITIES_IN_THE_FIELD_OF_SUSTAINABILITY": "Activités dans le domaine de la durabilité",
+      "PROJECT_ACTIVITY": "Projet/Activité",
+      "LOCATION": "Localisation",
+      "DETAILS": "Détails"
+    },
+    "FINANCIAL_INFORMATION": {
+      "FINANCIAL_INFORMATION": "Informations financières",
+      "SHARE_CAPITAL_EQUITY": "Capital social/Fonds propres",
+      "TYPE_OF_CAPITAL": "Type de capital"
+    },
+    "EDIT": "Modifier",
+    "DELETE": "Supprimer"
+  },
+
+  "ADD_EDIT_COMPANY": {
+    "ENTER_THE_REGISTERED_COMPANY_NAME": "Entrez le nom enregistré de l'entreprise",
+    "COMPANY_NAME_IS_REQUIRED": "Le nom de l'entreprise est requis",
+    "SELECT_YOUR_LEGAL_FORM": "Sélectionnez votre forme juridique",
+    "LEGAL_FORM_IS_REQUIRED": "La forme juridique est requise",
+    "REGISTRATION_DATE_IS_REQUIRED": "La date d'enregistrement est requise",
+    "LEGAL_STATUS_IS_REQUIRED": "Le statut juridique est requis",
+    "ENTER_THE_COMPANY_INDUSTRY": "Entrez le secteur d'activité de l'entreprise",
+    "SECTOR_IS_REQUIRED": "Le secteur est requis",
+    "ENTER_THE_HEADQUARTERS": "Entrez le siège social",
+    "HEADQUARTERS_IS_REQUIRED": "Le siège social est requis",
+    "ADD_BRANCH_LOCATION": "Ajouter un emplacement de succursale",
+    "BRANCH_LOCATIONS_IS_REQUIRED": "L'emplacement de la succursale est requis",
+    "ENTER_THE_DIRECTORS_NAME": "Entrez le nom du directeur",
+    "DIRECTOR_NAME_IS_REQUIRED": "Le nom du directeur est requis",
+    "ENTER_THE_DIRECTORS_ROLE": "Entrez le rôle du directeur",
+    "DIRECTOR_ROLE_IS_REQUIRED": "Le rôle du directeur est requis",
+    "ENTER_AUTHORIZED_PERSONS": "Entrez les personnes autorisées",
+    "AUTHORIZED_SIGNATORIES_IS_REQUIRED": "Les signataires autorisés sont requis",
+    "PROJECT_NAME": "Nom du projet",
+    "PROJECT_NAME_IS_REQUIRED": "Le nom du projet est requis",
+    "LOCATION": "Emplacement",
+    "ENTER_LOCATION": "Entrez l'emplacement",
+    "PROJECT_LOCATION_IS_REQUIRED": "L'emplacement du projet est requis",
+    "DETAILS_ABOUT_THE_PROJECT": "Détails sur le projet",
+    "PROJECT_DETAILS_IS_REQUIRED": "Les détails du projet sont requis",
+    "ENTER_THE_TOTAL_SHARE_CAPITAL_OR_EQUITY": "Entrez le capital social total ou les capitaux propres",
+    "COMPANY_CAPITAL_IS_REQUIRED": "Le capital de l'entreprise est requis",
+    "AUTHORIZED_CAPITAL": "Capital autorisé",
+    "TYPE_OF_CAPITAL_IS_REQUIRED": "Le type de capital est requis",
+    "FINANCIAL_REPORTS": "Rapports financiers",
+    "BROWSE_AND_CHOOSE_ONE_OR_MULTIPLE_DOCUMENTS": "Parcourir et choisir un ou plusieurs documents",
+    "FILE_UPLOADED_SUCCESSFULLY": "Fichier téléchargé avec succès",
+    "UPDATE_COMPANY": "Mettre à jour l'entreprise",
+    "ADD_NEW_COMPANY": "Ajouter une nouvelle entreprise",
+    "CANCEL": "Annuler"
+  },
+
+  "DASHBOARD": {
+    "TOTAL_ADMINISTRATOR_COMPANIES": "Total des entreprises administrateurs",
+    "TOTAL_EMPLOYEES": "Total des employés",
+    "TOTAL_EMPLOYEES_COMPANIES": "Total des entreprises employés",
+    "LATEST_EMPLOYEES": "Derniers 5 employés",
+    "LATEST_EMPLOYEES_COMPANIES": "Dernières 5 entreprises employés",
+    "CLIENT_NAME": "Nom du client",
+    "EMAIL": "Email",
+    "COMPANY_NAME": "Nom de l'entreprise",
+    "CREATED_BY": "Créé par"
+  }
+}

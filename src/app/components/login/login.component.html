@@ -1,0 +1,72 @@
+ <div class="flex min-h-screen bg-gradient-to-b from-[#61A94F] via-[#68AA52] to-[#085E59]">
+    <div class=" w-full   md:m-auto m-auto">
+      <div class="flex flex-col lg:flex-row  items-center justify-center overflow-hidden">
+        <div class="hidden lg:flex min-h-screen lg:w-3/5 static bg-gradient-to-b from-[#61A94F] via-[#68AA52] to-[#085E59] p-12 items-center text-white">
+          <div class=" p-10 max-w-md z-10 -mt-20">
+            <h2 class="text-3xl font-bold mb-4">Central Registry</h2>
+            <p class="mb-6">Sign in to manage company registrations, review submissions, and oversee platform operations.</p>
+            <p-button label="Read More" styleClass="bg-white w-40" [rounded]="true" variant="text"></p-button>
+          </div>
+   
+
+          <div class="fixed bottom-0 left-0 z-5">
+            <img src="assets/images/group1.png"  class="h-[300px] w-auto" alt="Logo">
+
+        </div>
+        
+
+        </div>
+        
+  
+        <!-- Right content - login form -->
+        <div class="w-10/12 lg:w-2/5  lg:min-h-screen bg-white grid content-center static p-10 lg:p-8 lg:rounded-none rounded-xl">
+            
+        <div class="flex justify-end lg:-mt-20">
+            <img src="assets/images/picsart.png" class="w-auto h-12" alt="Logo">
+
+          </div>
+        <div class=" lg:p-10 p-15">
+            <div class="mb-5 px-10">
+              <h1 class="text-2xl font-bold text-gray-900">Hello Again!</h1>
+              <p class="text-gray-600">Welcome Back</p>
+            </div>
+            <div class="space-y-4 px-10">
+              
+            <p-floatlabel variant="in">
+                <p-iconfield>
+                    <p-inputicon class="pi pi-envelope" [ngClass]="{ 'text-red-600': !email && submitted }"/>
+                    <input pInputText id="email" [(ngModel)]="email" autocomplete="off" class="w-full rounded-full" (keydown.enter)="handleLogin()"
+                     [ngClass]="{ 'ng-invalid ng-dirty': !email && submitted }" type="email"/>
+                </p-iconfield>
+                <label for="email">Email Address</label>
+            </p-floatlabel>
+            <small class="text-red-600 block -mt-6" 
+                       *ngIf="submitted && !email">Email is required.</small>
+
+            <p-floatlabel variant="in">
+                <p-iconfield>
+                    <p-inputicon class="pi pi-lock" [ngClass]="{ 'text-red-600': !password && submitted }" />
+                    <input pInputText id="password" type="password" [(ngModel)]="password" class="w-full rounded-full"
+                    [ngClass]="{'ng-invalid ng-dirty' : submitted && !password}" 
+                           (keydown.enter)="handleLogin()" />
+                </p-iconfield>
+                <label for="password">Password</label>
+            </p-floatlabel>
+            <small class="text-red-600 block -mt-6" 
+            *ngIf="submitted && !password">Password is required.</small>
+         
+              <button pButton type="submit" label="Login" size="large" (click)="handleLogin()" styleClass="w-full" 
+              [loading]="loading" 
+                      class="w-full rounded-full hover:bg-teal-900"></button>
+         
+              <div class="text-center">
+                <a  (click)="goToResetPassword($event)" class="text-sm text-gray-600 hover:text-teal-800 cursor-pointer">
+                  Forgot Password ?
+                </a>
+              </div>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+  <p-toast />
