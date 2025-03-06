@@ -1,0 +1,115 @@
+{
+  "APPROVED": "Approved",
+  "PENDING": "Pending",
+  "REJECTED": "Rejected",
+  "CLEAR_FILTER": "Clear Filter",
+  "SEARCH": "Search",
+  "STATUS": "Status",
+  "dashboard": "Dashboard",
+  "analytics": "Analytics",
+  "employee": "Employee",
+  "companies": "Companies",
+  "companyAdmin": "My Companies",
+  "companyEmployee": "Employee Companies",
+
+  "MY_COMPANIES": {
+    "COMPANIES": "Companies",
+    "SEARCH": "Search",
+    "CANCEL": "Cancel",
+    "PUBLISHED": "Published",
+    "ARCHIEVED": "Archieved",
+    "COMPANY_NAME": "Company Name",
+    "CREATED_BY": "Created By",
+    "LEGAL_STATUS": "Legal Status",
+    "REQUEST_TYPE": "Request Type",
+    "STATUS": "Status",
+    "APPROVAL_STATUS": "Approval status",
+    "ACTIONS": "Actions",
+    "ADD_NEW": "Add New Company",
+    "VIEW": "View",
+    "DELETE": "Delete",
+    "EDIT": "Edit"
+  },
+  "VIEW_COMPANY": {
+    "COMPANY_INFORMATION": {
+      "COMPANY_INFORMATION": "Company Information",
+      "COMPANY_NAME": "Company Name",
+      "APPROVAL_STATUS": "Approval Status",
+      "REQUEST_TYPE": "Request Type",
+      "REQUEST_STATUS": "Request Status"
+    },
+    "LEGAL_INFORMATION": {
+      "LEGAL_INFORMATION": "Legal Information",
+      "LEGAL_FORM": "Legal Form",
+      "REGISTRATION_DATE": "Registration Date",
+      "LEGAL_STATUS": "Legal Status",
+      "SECTOR": "Sector"
+    },
+    "CREATED_BY": {
+      "CREATED_BY": "Created By",
+      "FULL_NAME": "Full Name",
+      "EMAIL": "Email"
+    },
+    "ADDRESS_INFORMATION": {
+      "ADDRESS_INFORMATION": "Address Information",
+      "HEADQUARTERS": "Headquarters",
+      "BRANCH_LOCATIONS": "Branch Locations"
+    },
+    "MANAGEMENT_DETAILS": {
+      "MANAGEMENT_DETAILS": "Management Details",
+      "DIRECTORS": "Directors",
+      "SIGNATORIES": "Signatories"
+    },
+    "ACTIVITIES_IN_THE_FIELD_OF_SUSTAINABILITY": {
+      "ACTIVITIES_IN_THE_FIELD_OF_SUSTAINABILITY": "Activities in the field of sustainability",
+      "PROJECT_ACTIVITY": "Project/Activity",
+      "LOCATION": "Location",
+      "DETAILS": "Details"
+    },
+    "FINANCIAL_INFORMATION": {
+      "FINANCIAL_INFORMATION": "Financial Information",
+      "SHARE_CAPITAL_EQUITY": "Share Capital/Equity",
+      "TYPE_OF_CAPITAL": "Type of Capital"
+    },
+    "EDIT": "Edit",
+    "DELETE": "Delete"
+  },
+
+  "ADD_EDIT_COMPANY": {
+    "ENTER_THE_REGISTERED_COMPANY_NAME": "Enter the registered company name",
+    "COMPANY_NAME_IS_REQUIRED": "Company Name is required",
+    "SELECT_YOUR_LEGAL_FORM": "Select your legal Form",
+    "LEGAL_FORM_IS_REQUIRED": "Legal form is required",
+    "REGISTRATION_DATE_IS_REQUIRED": "Registration Date is required",
+    "LEGAL_STATUS_IS_REQUIRED": "Legal status is required",
+    "ENTER_THE_COMPANY_INDUSTRY": "Enter the company industry",
+    "SECTOR_IS_REQUIRED": "Sector is required",
+    "ENTER_THE_HEADQUARTERS": "Enter the Headquarters",
+    "HEADQUARTERS_IS_REQUIRED": "Headquarters is required",
+    "ADD_BRANCH_LOCATION": "Add Branch Location",
+    "BRANCH_LOCATIONS_IS_REQUIRED": "Branch Location is required",
+    "ENTER_THE_DIRECTORS_NAME": "Enter the director's name",
+    "DIRECTOR_NAME_IS_REQUIRED": "Director Name is required",
+    "ENTER_THE_DIRECTORS_ROLE": "Enter the director's role",
+    "DIRECTOR_ROLE_IS_REQUIRED": "Director Role is required",
+    "ENTER_AUTHORIZED_PERSONS": "Enter authorized persons",
+    "AUTHORIZED_SIGNATORIES_IS_REQUIRED": "Authorized Signatories is required",
+    "PROJECT_NAME": "Project name",
+    "PROJECT_NAME_IS_REQUIRED": "Project name is required",
+    "LOCATION": "Location",
+    "ENTER_LOCATION": "Enter Location",
+    "PROJECT_LOCATION_IS_REQUIRED": "Project location is required",
+    "DETAILS_ABOUT_THE_PROJECT": "Details about the project",
+    "PROJECT_DETAILS_IS_REQUIRED": "Project details is required",
+    "ENTER_THE_TOTAL_SHARE_CAPITAL_OR_EQUITY": "Enter the total share capital or equity",
+    "COMPANY_CAPITAL_IS_REQUIRED": "Company capital is required",
+    "AUTHORIZED_CAPITAL": "Authorized Capital",
+    "TYPE_OF_CAPITAL_IS_REQUIRED": "Type of capital is required",
+    "FINANCIAL_REPORTS": "Financial Reports",
+    "BROWSE_AND_CHOOSE_ONE_OR_MULTIPLE_DOCUMENTS": "Browse and choose one or multiple documents",
+    "FILE_UPLOADED_SUCCESSFULLY": "File uploaded successfully",
+    "UPDATE_COMPANY": "Update Company",
+    "ADD_NEW_COMPANY": "Add New Company",
+    "CANCEL": "Cancel"
+  }
+}

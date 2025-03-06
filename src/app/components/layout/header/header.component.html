@@ -1,0 +1,88 @@
+<header class="bg-gray-50 border-b px-4 py-3 flex items-center justify-between lg:hidden">
+  <!-- Left section with logo -->
+  <div class="flex items-center">
+    <img 
+      src="assets/images/picsart.png" 
+      alt="Nachhaltigkeits Register" 
+      class="h-8"
+    >
+  </div>
+<p-toast></p-toast>
+  <!-- Right section with user profile and menu -->
+  <div class="flex items-center gap-4">
+    <p-select [options]="langs" [(ngModel)]="selectedValue" size="small" optionLabel="name"  class="mb-2 border-teal-600" (onChange)="onChangeLang(selectedValue)">
+      <ng-template #selectedItem let-selectedOption>
+          <div class="flex items-center gap-2" >
+              <img
+                  src="assets/images/flag_placeholder.png"
+                  [class]="'flag flag-' + selectedValue.code.toLowerCase()"
+                  style="width: 18px rounded-lg"
+              />
+              <div>{{ selectedValue.name }}</div>
+          </div>
+      </ng-template>
+      <ng-template let-country #item>
+          <div class="flex items-center gap-2">
+              <img
+                  src="assets/images/flag_placeholder.png"
+                  [class]="'flag flag-' + country.code.toLowerCase()"
+                  style="width: 18px"
+              />
+              <div>{{ country.name }}</div>
+          </div>
+      </ng-template>
+     
+  </p-select>
+    <!-- User profile -->
+    <div class="flex items-center gap-2 p-1 cursor-pointer border border-transparent rounded-3xl hover:border-gray-300 hover:bg-gray-50"  (click)="menu.toggle($event)">
+      <img 
+        src="assets/images/profile_avatar.png" 
+        alt="Profile" 
+        class="w-10 h-10 rounded-full bg-pink-100"
+        
+      >
+      <!-- <div class="hidden sm:block">
+        <p class="font-medium text-gray-900">John Doe</p>
+        <p class="text-sm text-gray-500">Admin</p>
+      </div> -->
+      <div class="hidden sm:block">
+        <p class="font-medium">{{ user?.username }}</p>
+        <p class="text-sm text-gray-500">{{ user?.role }}</p>
+    </div>
+      <i class="pi pi-angle-down"></i>
+    </div>
+
+    <!-- Menu button -->
+    <button 
+      class="p-2 hover:bg-gray-100 rounded-lg"
+      (click)="toggleSidebar()"
+    >
+      <svg 
+        xmlns="http://www.w3.org/2000/svg" 
+        class="h-6 w-6" 
+        fill="none" 
+        viewBox="0 0 24 24" 
+        stroke="currentColor"
+      >
+        <path 
+          stroke-linecap="round" 
+          stroke-linejoin="round" 
+          stroke-width="2" 
+          d="M4 6h16M4 12h16M4 18h16"
+        />
+      </svg>
+    </button>
+  </div>
+</header>
+
+<p-menu #menu 
+[model]="menuItems" 
+[popup]="true"
+styleClass="w-48"
+></p-menu>
+
+<app-edit-profile
+[(visible)]="profileDialog"
+(confirm)="handleConfirm()"
+(cancel)="handleCancel()"
+/>

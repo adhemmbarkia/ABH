@@ -1,0 +1,30 @@
+@media (max-width: 599px) {
+    :host ::ng-deep .p-dialog {
+      margin: 0;
+      height: 100vh;
+      max-height: 100vh !important;
+      width: 100vw !important;
+    }
+  
+    :host ::ng-deep .p-dialog .p-dialog-content {
+      height: calc(100vh - 6rem);
+      overflow-y: auto;
+    }
+  }
+
+
+  .active-filter {
+    border-color: #3b82f6; /* Example: blue border */
+    background-color: #eff6ff; /* Example: light blue background */
+  }
+
+  .no-employee-message {
+    text-align: center;
+    padding: 20px;
+    font-size: 16px;
+    color: #666;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin: 20px 0;
+  }
